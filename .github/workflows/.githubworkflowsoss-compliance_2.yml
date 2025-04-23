@@ -1,0 +1,46 @@
+name: OSS Compliance - SBOM + License Excel
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  sbom-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Python packages
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install openpyxl
+
+      - name: Install SCANOSS CLI
+        run: |
+          curl -sSL https://github.com/scanoss/scanoss-cli/releases/latest/download/scanoss-linux-amd64 -o scanoss
+          chmod +x scanoss
+          sudo mv scanoss /usr/local/bin/
+
+      - name: Run SCANOSS SBOM scan
+        run: |
+          scanoss --path . --output scanoss.sbom.spdx.json
+
+      - name: Generate License Excel Report
+        run: |
+          python3 generate_excel_report.py scanoss.sbom.spdx.json compliance-report.xlsx
+
+      - name: Upload SBOM and Excel
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom-and-license-report
+          path: |
+            scanoss.sbom.spdx.json
+            compliance-report.xlsx
