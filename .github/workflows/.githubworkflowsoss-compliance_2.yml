@@ -38,7 +38,7 @@ jobs:
           python3 generate_excel_report.py scanoss.sbom.spdx.json compliance-report.xlsx
 
       - name: Upload SBOM and Excel
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: sbom-and-license-report
           path: |
