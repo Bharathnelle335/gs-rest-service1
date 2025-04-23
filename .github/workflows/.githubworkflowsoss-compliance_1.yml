@@ -1,4 +1,4 @@
-name: OSS Compliance - SBOM + License Scan
+name: OSS Compliance - SBOM + License Scan_1
 
 on:
   workflow_dispatch:
