@@ -20,10 +20,14 @@ jobs:
       - name: Build Project
         run: ./gradlew build -x test || echo "Gradle not used"
 
-      - name: Install SCANOSS + Syft
+      - name: Install Syft, SCANOSS CLI and Python libs
         run: |
           pip install scanoss pandas openpyxl
+          curl -sSL https://github.com/scanoss/scanoss-cli/releases/latest/download/scanoss-linux-amd64 -o scanoss
+          chmod +x scanoss
+          sudo mv scanoss /usr/local/bin/
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      
 
       - name: Generate SBOM with Syft
         run: syft dir:. --scope all-layers -o json > syft.sbom.json
